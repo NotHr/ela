@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms">
+  <h:head>
+    <h:title>ELA · Offline reading</h:title>
+    <model>
+      <instance><data xmlns="" id="ela_reading_v1" version="2026111801">
+        <student_id/><student_name/><classroom/><recorded_at/><language>te</language><activity/>
+        <audio_mode>learner_only</audio_mode><detect_language>true</detect_language>
+        <paragraph_photo/><recording/><student_reference/>
+        <meta><instanceID/></meta>
+      </data></instance>
+      <bind nodeset="/data/recorded_at" type="dateTime" jr:preload="timestamp" jr:preloadParams="start" readonly="true()"/>
+      <bind nodeset="/data/student_id" type="string" required="true()"/>
+      <bind nodeset="/data/student_name" type="string"/>
+      <bind nodeset="/data/classroom" type="string" required="true()"/>
+      <bind nodeset="/data/language" type="string" required="true()"/>
+      <bind nodeset="/data/activity" type="string" required="true()"/>
+      <bind nodeset="/data/audio_mode" type="string" required="true()"/>
+      <bind nodeset="/data/detect_language" type="string"/>
+      <bind nodeset="/data/paragraph_photo" type="binary" required="true()"/>
+      <bind nodeset="/data/recording" type="binary" required="true()"/>
+      <bind nodeset="/data/student_reference" type="binary" relevant="/data/audio_mode = 'conversation'" required="/data/audio_mode = 'conversation'"/>
+      <bind nodeset="/data/meta/instanceID" type="string" readonly="true()" calculate="concat('uuid:', uuid())"/>
+    </model>
+  </h:head>
+  <h:body>
+    <input ref="/data/student_id"><label>Student ID / విద్యార్థి గుర్తింపు సంఖ్య</label></input>
+    <input ref="/data/student_name"><label>Name / పేరు</label></input>
+    <input ref="/data/classroom"><label>Class / తరగతి</label></input>
+    <select1 ref="/data/language"><label>Passage language / పాఠం భాష</label><item><label>తెలుగు</label><value>te</value></item><item><label>English</label><value>en</value></item></select1>
+    <input ref="/data/activity"><label>Activity / కార్యాచరణ</label></input>
+    <select1 ref="/data/audio_mode"><label>Recording / రికార్డింగ్</label><item><label>Student only / విద్యార్థి మాత్రమే</label><value>learner_only</value></item><item><label>Teacher + student / ఉపాధ్యాయుడు + విద్యార్థి</label><value>conversation</value></item></select1>
+    <select1 ref="/data/detect_language"><label>Language switching / భాష మార్పు</label><item><label>Automatic / స్వయంచాలకం</label><value>true</value></item><item><label>Fixed language / ఎంచుకున్న భాష</label><value>false</value></item></select1>
+    <upload ref="/data/paragraph_photo" mediatype="image/*"><label>Paragraph photo / పాఠం ఫోటో</label></upload>
+    <upload ref="/data/student_reference" mediatype="audio/*"><label>Student-only voice sample · 3–30 s / విద్యార్థి స్వర నమూనా</label></upload>
+    <upload ref="/data/recording" mediatype="audio/*"><label>Reading recording / పఠన రికార్డింగ్</label></upload>
+  </h:body>
+</h:html>

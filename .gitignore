@@ -1,0 +1,17 @@
+/target/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+.venv/
+/.venv-ela/
+__pycache__/
+.ruff_cache/
+.env
+.env.*
+!.env.example
+/models/
+/.ela-work/

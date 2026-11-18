@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ELA · Assessments</title>
+    <link
+      rel="preload"
+      href="/vendor/Geist-Variable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="/vendor/oat.min.css" />
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/vendor/oat.min.js" defer></script>
+    <script src="/app.js" defer></script>
+    <script src="/students.js" defer></script>
+    <script src="/collection.js" defer></script>
+  </head>
+  <body>
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#assessments" aria-label="ELA"
+        ><span class="brand-mark">e</span>ela<span class="brand-label"
+          >LOCAL</span
+        ></a
+      >
+      <nav aria-label="Main">
+        <a href="#overview" data-view="overview"
+          ><svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" /></svg
+          ><span data-i18n="overview">Overview</span></a
+        >
+        <a href="#assessments" data-view="assessments" aria-current="page"
+          ><svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M8 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-3"
+            />
+            <rect x="8" y="2" width="8" height="4" rx="1" />
+            <path d="m7 12 2 2 4-4m-6 8h10" /></svg
+          ><span data-i18n="assessments">Assessments</span
+          ><span id="nav-count" class="nav-count">0</span></a
+        >
+        <a href="#students" data-view="students"
+          ><svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="9" cy="8" r="3" />
+            <path
+              d="M3 21v-3a6 6 0 0 1 12 0v3m1-16a3 3 0 0 1 0 6m2 4a5 5 0 0 1 3 4v2"
+            /></svg
+          ><span data-i18n="students">Students</span></a
+        >
+        <a href="#models" data-view="models"
+          ><svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="6" y="6" width="12" height="12" rx="2" />
+            <rect x="10" y="10" width="4" height="4" />
+            <path
+              d="M9 2v4m6-4v4M9 18v4m6-4v4M2 9h4m-4 6h4m12-6h4m-4 6h4"
+            /></svg
+          ><span data-i18n="models">Models</span></a
+        >
+      </nav>
+      <div class="sidebar-footer">
+        <span class="connection-dot" id="connection-dot"></span
+        ><span id="connection-label" data-i18n="local">Local workspace</span
+        ><span class="version">v0.1</span>
+      </div>
+    </aside>
+    <button
+      type="button"
+      id="sidebar-scrim"
+      class="sidebar-scrim"
+      aria-label="Close navigation"
+      hidden
+    ></button>
+    <div class="shell">
+      <header class="main-bar">
+        <button
+          type="button"
+          id="menu-toggle"
+          class="icon-button mobile-only"
+          aria-label="Toggle navigation"
+          aria-expanded="false"
+          aria-controls="sidebar"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <div class="breadcrumbs">
+          <span>ELA</span><span class="separator">/</span
+          ><span id="breadcrumb">Assessments</span>
+        </div>
+        <label class="language-switch"
+          ><span class="sr-only" data-i18n="interface">Interface language</span
+          ><select id="ui-language">
+            <option value="en">English</option>
+            <option value="te">తెలుగు</option>
+          </select></label
+        >
+        <span class="avatar" aria-hidden="true">E</span>
+      </header>
+      <main>
+        <div class="page-heading">
+          <div class="heading-title">
+            <h1 id="page-title">Assessments</h1>
+            <span id="page-count" class="count-pill">0</span>
+          </div>
+          <div class="heading-actions">
+            <button
+              type="button"
+              id="import-collection"
+              class="outline"
+              data-i18n="importCollection"
+            >
+              Import
+            </button>
+            <button
+              type="button"
+              id="export"
+              class="outline"
+              data-i18n="export"
+            >
+              Export</button
+            ><button type="button" id="new-assessment">
+              <span aria-hidden="true">＋</span>
+              <span data-i18n="newAssessment">New assessment</span>
+            </button>
+          </div>
+        </div>
+        <div
+          id="message"
+          class="notice"
+          role="status"
+          aria-live="polite"
+          hidden
+        ></div>
+        <section id="overview-panel" hidden>
+          <div id="stats" class="stats-grid"></div>
+          <div class="panel">
+            <header class="panel-heading">
+              <h2 data-i18n="recent">Recent assessments</h2>
+              <a href="#assessments" data-i18n="viewAll">View all</a>
+            </header>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th data-i18n="learner">Learner</th>
+                    <th data-i18n="classroom">Class</th>
+                    <th data-i18n="language">Language</th>
+                    <th data-i18n="status">Status</th>
+                    <th data-i18n="readingScore">Reading match</th>
+                    <th data-i18n="date">Date</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-records"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section id="assessments-panel">
+          <div class="panel">
+            <div class="toolbar">
+              <label class="search-field"
+                ><svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="10.5" cy="10.5" r="6.5" />
+                  <path d="m16 16 4.5 4.5" /></svg
+                ><span class="sr-only" data-i18n="search"
+                  >Search assessments</span
+                ><input
+                  type="search"
+                  id="search"
+                  placeholder="Search assessments"
+              /></label>
+              <div class="filters">
+                <label
+                  ><span class="sr-only" data-i18n="status">Status</span
+                  ><select id="status-filter">
+                    <option value="" data-i18n="allStatuses">
+                      All statuses
+                    </option>
+                    <option value="complete" data-i18n="complete">
+                      Completed
+                    </option>
+                    <option value="processing" data-i18n="processing">
+                      Processing
+                    </option>
+                    <option value="failed" data-i18n="failed">Failed</option>
+                  </select></label
+                ><label
+                  ><span class="sr-only" data-i18n="language">Language</span
+                  ><select id="language-filter">
+                    <option value="" data-i18n="allLanguages">
+                      All languages
+                    </option>
+                    <option value="en">English</option>
+                    <option value="te">తెలుగు</option>
+                  </select></label
+                >
+              </div>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th data-i18n="learner">Learner</th>
+                    <th data-i18n="classroom">Class</th>
+                    <th data-i18n="language">Language</th>
+                    <th data-i18n="status">Status</th>
+                    <th data-i18n="readingScore">Reading match</th>
+                    <th data-i18n="date">Date</th>
+                    <th class="actions-column">
+                      <span class="sr-only" data-i18n="actions">Actions</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="records"></tbody>
+              </table>
+            </div>
+            <footer class="table-footer">
+              <span id="record-range"></span>
+              <div class="pagination">
+                <button
+                  type="button"
+                  id="previous"
+                  class="outline small"
+                  data-i18n="previous"
+                >
+                  Previous</button
+                ><span id="page-number">1</span
+                ><button
+                  type="button"
+                  id="next"
+                  class="outline small"
+                  data-i18n="next"
+                >
+                  Next
+                </button>
+              </div>
+            </footer>
+          </div>
+        </section>
+        <section id="students-panel" hidden>
+          <div class="panel">
+            <div class="toolbar">
+              <label class="search-field"
+                ><span class="sr-only" data-i18n="searchStudents"
+                  >Search students</span
+                ><input
+                  id="student-search"
+                  type="search"
+                  placeholder="Search students"
+              /></label>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th data-i18n="studentId">Student ID</th>
+                    <th data-i18n="learner">Learner</th>
+                    <th data-i18n="classroom">Class</th>
+                    <th data-i18n="assessments">Assessments</th>
+                    <th data-i18n="complete">Completed</th>
+                    <th data-i18n="date">Date</th>
+                  </tr>
+                </thead>
+                <tbody id="student-rows"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        <section id="models-panel" hidden>
+          <div id="model-cards" class="model-grid"></div>
+          <div class="panel utility-row">
+            <span data-i18n="legacyRecords">Previous manual records</span
+            ><button
+              type="button"
+              id="export-legacy"
+              class="outline small"
+              data-i18n="export"
+            >
+              Export
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+    <dialog id="assessment-dialog" aria-labelledby="assessment-title">
+      <form id="assessment-form">
+        <header class="dialog-heading">
+          <h2 id="assessment-title" data-i18n="newAssessment">
+            New assessment
+          </h2>
+          <button
+            type="button"
+            class="close-button"
+            data-close="assessment-dialog"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </header>
+        <div class="dialog-content">
+          <div class="form-grid">
+            <label
+              ><span data-i18n="studentId">Student ID</span
+              ><input
+                name="student_id"
+                required
+                maxlength="120"
+                pattern="[A-Za-z0-9_.-]+"
+                autocomplete="off"
+            /></label>
+            <label
+              ><span data-i18n="learner">Learner</span
+              ><input
+                name="learner"
+                required
+                maxlength="120"
+                autocomplete="off" /></label
+            ><label
+              ><span data-i18n="classroom">Class</span
+              ><input
+                name="classroom"
+                required
+                maxlength="120"
+                autocomplete="off" /></label
+            ><label
+              ><span data-i18n="language">Language</span
+              ><select name="language" id="assessment-language">
+                <option value="te">తెలుగు</option>
+                <option value="en">English</option>
+              </select></label
+            ><label
+              ><span data-i18n="task">Activity</span
+              ><select name="task" id="task">
+                <option value="read_aloud" data-i18n="readAloud">
+                  Read aloud
+                </option>
+                <option value="speaking" data-i18n="speaking">
+                  Free speaking
+                </option>
+              </select></label
+            >
+            <label
+              ><span data-i18n="recordingMode">Recording</span
+              ><select name="audio_mode" id="audio-mode">
+                <option value="conversation" data-i18n="conversation">
+                  Teacher + student
+                </option>
+                <option value="learner_only" data-i18n="studentOnly">
+                  Student only
+                </option>
+              </select></label
+            >
+            <label
+              ><span data-i18n="languageMode">Language switching</span
+              ><select name="detect_language" id="detect-language">
+                <option value="true" data-i18n="autoLanguages">
+                  Auto · Telugu + English
+                </option>
+                <option value="false" data-i18n="fixedLanguage">
+                  Fixed language
+                </option>
+              </select></label
+            >
+          </div>
+          <label id="student-reference-field"
+            ><span data-i18n="studentReference"
+              >Student voice sample (3–30 s)</span
+            ><input
+              name="student_reference"
+              id="student-reference"
+              type="file"
+              accept="audio/*,video/*"
+              required
+          /></label>
+          <label
+            ><span data-i18n="activityName">Activity name</span
+            ><input name="prompt" required maxlength="4000"
+          /></label>
+          <label id="reference-source-field"
+            ><span data-i18n="passageSource">Passage source</span
+            ><select id="reference-source">
+              <option value="photo" data-i18n="paragraphPhoto">
+                Paragraph photo
+              </option>
+              <option value="text" data-i18n="typedPassage">Text</option>
+            </select></label
+          >
+          <label id="paragraph-photo-field"
+            ><span data-i18n="paragraphPhoto">Paragraph photo</span
+            ><input
+              name="paragraph_photo"
+              id="paragraph-photo"
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/tiff"
+              required
+          /></label>
+          <label id="reference-field"
+            ><span data-i18n="passage">Reading passage</span
+            ><textarea
+              name="reference_text"
+              id="reference"
+              required
+              maxlength="4000"
+              rows="4"
+              dir="auto"
+            ></textarea>
+          </label>
+          <label class="dropzone" id="dropzone" for="audio"
+            ><svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 16V4m-4 4 4-4 4 4M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"
+              /></svg
+            ><span id="file-label" data-i18n="dropAudio"
+              >Drop audio or browse</span
+            ><span id="file-size" class="muted">64 MB</span
+            ><input
+              id="audio"
+              name="audio"
+              type="file"
+              accept="audio/*,video/*,.amr,.m4a,.opus,.caf,.aiff,.wma"
+              required
+          /></label>
+          <div class="model-line">
+            <span id="model-dot" class="connection-dot"></span
+            ><span id="model-status"></span>
+          </div>
+          <p id="form-error" role="alert" class="form-error" hidden></p>
+        </div>
+        <footer class="dialog-footer">
+          <button
+            type="button"
+            class="outline"
+            data-close="assessment-dialog"
+            data-i18n="cancel"
+          >
+            Cancel</button
+          ><button type="submit" id="assess" data-i18n="assess">
+            Start assessment
+          </button>
+        </footer>
+      </form>
+    </dialog>
+    <dialog id="collection-dialog" aria-labelledby="collection-title">
+      <form id="collection-form">
+        <header class="dialog-heading">
+          <h2 id="collection-title" data-i18n="importCollection">Import</h2>
+          <button
+            type="button"
+            class="close-button"
+            data-close="collection-dialog"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </header>
+        <div class="dialog-content">
+          <label
+            ><span data-i18n="collectionZip">Collection ZIP</span
+            ><input
+              name="archive"
+              type="file"
+              accept=".zip,application/zip"
+              required /></label
+          ><a
+            href="/api/collection/form"
+            download="ela-reading.xml"
+            data-i18n="downloadForm"
+            >Download mobile form</a
+          >
+          <div id="collection-results"></div>
+        </div>
+        <footer class="dialog-footer">
+          <button
+            type="button"
+            class="outline"
+            data-close="collection-dialog"
+            data-i18n="close"
+          >
+            Close</button
+          ><button
+            type="submit"
+            id="collection-submit"
+            data-i18n="importCollection"
+          >
+            Import
+          </button>
+        </footer>
+      </form>
+    </dialog>
+    <dialog
+      id="student-dialog"
+      class="report-dialog"
+      aria-labelledby="student-title"
+    >
+      <header class="dialog-heading">
+        <div>
+          <h2 id="student-title"></h2>
+          <span id="student-meta" class="muted"></span>
+        </div>
+        <button
+          type="button"
+          class="close-button"
+          data-close="student-dialog"
+          aria-label="Close"
+        >
+          ×
+        </button>
+      </header>
+      <div id="student-content" class="dialog-content"></div>
+      <footer class="dialog-footer">
+        <button
+          type="button"
+          id="export-student"
+          class="outline"
+          data-i18n="export"
+        >
+          Export</button
+        ><button type="button" data-close="student-dialog" data-i18n="close">
+          Close
+        </button>
+      </footer>
+    </dialog>
+    <dialog
+      id="report-dialog"
+      class="report-dialog"
+      aria-labelledby="report-title"
+    >
+      <header class="dialog-heading">
+        <div>
+          <h2 id="report-title"></h2>
+          <span id="report-meta" class="muted"></span>
+        </div>
+        <button
+          type="button"
+          class="close-button"
+          data-close="report-dialog"
+          aria-label="Close"
+        >
+          ×
+        </button>
+      </header>
+      <div id="report-content" class="dialog-content"></div>
+      <footer class="dialog-footer">
+        <button
+          type="button"
+          id="delete-report"
+          class="outline danger"
+          data-i18n="delete"
+        >
+          Delete</button
+        ><button
+          type="button"
+          id="export-report"
+          class="outline"
+          data-i18n="export"
+        >
+          Export</button
+        ><button type="button" data-close="report-dialog" data-i18n="close">
+          Close
+        </button>
+      </footer>
+    </dialog>
+  </body>
+</html>

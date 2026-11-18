@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Local runtime only: never installs packages or downloads models.
+set -euo pipefail
+root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+if [ -n "${ELA_CPP_RUNTIME_LIB:-}" ]; then
+  export LD_LIBRARY_PATH="$ELA_CPP_RUNTIME_LIB${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+fi
+export HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1
+export TOKENIZERS_PARALLELISM=false OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2
+export CUDA_VISIBLE_DEVICES=""
+exec "$root/.venv-ela/bin/python" "$@"
